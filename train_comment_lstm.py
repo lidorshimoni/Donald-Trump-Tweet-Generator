@@ -8,17 +8,18 @@ from utils import *
 
 SEQ_LENGTH = 24
 MAX_EPOCHS = 100
-BATCH_SIZE = 360
+BATCH_SIZE = 256
 DATA_DIR = 'training_data'
-MODEL_DIR = 'training_data'
+MODEL_DIR = 'models'
 EMB_SIZE = 200
 
 from tensorflow.keras.callbacks import ModelCheckpoint
 
-CALLBACKS = [ModelCheckpoint(filepath=MODEL_DIR + '/model.{epoch:02d}.h5')]
+CALLBACKS = [ModelCheckpoint(filepath=MODEL_DIR + '/best_model.h5')]
+# CALLBACKS = [ModelCheckpoint(filepath=MODEL_DIR + '/model.{epoch:02d}.h5')]
 
 if not os.path.exists(DATA_DIR + '/sequences.txt'):
-
+    print("- No sequences found. generating new sequences file...")
     comments = load_text(DATA_DIR + '/tweets.txt')
     comments = comments.replace('\n', ' endoftweet ')
     tokens = comments.split()
@@ -41,18 +42,18 @@ if not os.path.exists(DATA_DIR + '/sequences.txt'):
 
 # ========TOKENIZE SEQUENCES========
 
-doc = load_text('sequences.txt')
+doc = load_text(DATA_DIR + '/sequences.txt')
 lines = doc.split('\n')
 
 from tensorflow.keras.preprocessing.text import Tokenizer
 from pickle import dump, load
 
-if not os.path.exists('tokenizer.pkl'):
+if not os.path.exists( DATA_DIR + '/tokenizer.pkl'):
     tokenizer = Tokenizer()
     tokenizer.fit_on_texts(lines)
-    dump(tokenizer, open('tokenizer.pkl', 'wb'))
+    dump(tokenizer, open( DATA_DIR + '/tokenizer.pkl', 'wb'))
 
-tokenizer = load(open('tokenizer.pkl', 'rb'))
+tokenizer = load(open( DATA_DIR + '/tokenizer.pkl', 'rb'))
 sequences = tokenizer.texts_to_sequences(lines)
 
 vocab_size = len(tokenizer.word_index) + 1

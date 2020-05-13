@@ -7,25 +7,28 @@ import random
 import numpy as np
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-DATA_DIR = 'training_data'
 
+DATA_DIR = 'training_data'
 SEQ_LENGTH = 24
 BATCH_SIZE = 200
 CONF_THRESH = 0.6
-MODEL_DIR = 'training_data'
+MODEL_DIR = 'models'
 
 doc = load_text(DATA_DIR + '/sequences.txt')
 lines = doc.split('\n')
 
 from pickle import load
 
-tokenizer = load(open('tokenizer.pkl', 'rb'))
+tokenizer = load(open(DATA_DIR + '/tokenizer.pkl', 'rb'))
 sequences = tokenizer.texts_to_sequences(lines)
+print("- Tokenizer file loaded.")
 
 vocab_size = len(tokenizer.word_index) + 1
 
-model = load_model(MODEL_DIR + '/model.h5')
+model = load_model(MODEL_DIR + '/best_model.h5')
 # model = load_model('DT_model.h5')
+print("- weights file loaded.")
+
 
 output = ""
 
